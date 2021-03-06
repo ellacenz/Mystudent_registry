@@ -26,6 +26,7 @@ public class MyFrame extends javax.swing.JFrame {
     private StudentDBManager studentDBManager;
     private List<Student> studentList;
     private boolean isUpdate = false;
+    private boolean isdelete = false;
 
     public MyFrame() throws SQLException {
         studentDBManager = new StudentDBManager();
@@ -67,6 +68,7 @@ public class MyFrame extends javax.swing.JFrame {
         messageLabel = new javax.swing.JLabel();
         updateRadioButton = new javax.swing.JRadioButton();
         studentComboBox = new javax.swing.JComboBox<>();
+        deleteRadioButton = new javax.swing.JRadioButton();
 
         jLabel1.setText("jLabel1");
 
@@ -143,6 +145,14 @@ public class MyFrame extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(deleteRadioButton);
+        deleteRadioButton.setText("Delete");
+        deleteRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteRadioButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -178,6 +188,8 @@ public class MyFrame extends javax.swing.JFrame {
                 .addComponent(newEntryRadioBox)
                 .addGap(18, 18, 18)
                 .addComponent(updateRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(deleteRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -187,10 +199,11 @@ public class MyFrame extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(newEntryRadioBox, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(updateRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(updateRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(studentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -238,11 +251,19 @@ public class MyFrame extends javax.swing.JFrame {
                 if (isUpdate) {
                     Student selectedStudent = (Student) studentComboBox.getSelectedItem();
                     student.setId(selectedStudent.getId());
+                    studentDBManager.updateStudent(student);
+                }
+               
+                else if (isdelete){
+                Student selectedStudent = (Student) studentComboBox.getSelectedItem();
+                student.setId(selectedStudent.getId());
+                studentDBManager.deleteStudent(student);
+            
+                }
+            else{    
                     studentDBManager.saveStudent(student);
                 }
-                else{
-                    studentDBManager.saveStudent(student);
-                }
+               
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -251,10 +272,17 @@ public class MyFrame extends javax.swing.JFrame {
             if (!isUpdate) {
                 clearEntries();
             }
-        } else {
+        } else if (isdelete){
+            clearEntries();
+            messageLabel.setText("The student record has been deleted successfully");
+            messageLabel.setForeground(Color.red);
+        }
+        else{
             messageLabel.setText("Please complete the form");
             messageLabel.setForeground(Color.red);
         }
+        
+        
 
         // JOptionPane.showInternalMessageDialog(null, lNameTextbox.getText() + " " + fNameTextbox.getText());
     }//GEN-LAST:event_submitActionPerformed
@@ -280,6 +308,7 @@ public class MyFrame extends javax.swing.JFrame {
             femaleRadiobox.setSelected(true);
         }
     }
+   
 
     private void updateRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateRadioButtonActionPerformed
         if (updateRadioButton.isSelected()) {
@@ -303,6 +332,16 @@ public class MyFrame extends javax.swing.JFrame {
         Student student = (Student) studentComboBox.getSelectedItem();
         updateEntries(student);
     }//GEN-LAST:event_studentComboBoxItemStateChanged
+
+    private void deleteRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteRadioButtonActionPerformed
+       if (deleteRadioButton.isSelected()) {
+            Student student = (Student) studentComboBox.getSelectedItem();
+            updateEntries(student);
+            isdelete = true;
+            studentComboBox.setVisible(true);
+           
+        } 
+    }//GEN-LAST:event_deleteRadioButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -345,6 +384,7 @@ public class MyFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JRadioButton deleteRadioButton;
     private javax.swing.JTextArea descContentTextArea;
     private javax.swing.JLabel descriptionLabel;
     private javax.swing.JTextField fNameTextbox;

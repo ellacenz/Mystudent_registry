@@ -27,27 +27,37 @@ public class StudentDBManager {
     public void saveStudent(Student student) throws SQLException{
         dbconnector.openConnection();
         conn = dbconnector.getConnection();
-        
-        String query = "";
-        
-        if(student.getId()>0){
-        query = "UPDATE students set firstname = ?, lastname = ?, "
-                + "description = ?, gender= ? WHERE id = ?";
-        }
-        else{
-        query = "INSERT INTO students (firstname, lastname, description, gender)"
+      
+        String query = "INSERT INTO students (firstname, lastname, description, gender)"
         + " values (?, ?, ?, ?)";
-        }
+        
         
         PreparedStatement preparedStmt = conn.prepareStatement(query);
         preparedStmt.setString(1, student.getFirstName());
         preparedStmt.setString(2, student.getLastName());
         preparedStmt.setString(3, student.getDescription());
         preparedStmt.setString(4, student.getGender());
+
+        // execute the preparedstatement
+        preparedStmt.execute();
+
+        conn.close();
+    }
+    public void updateStudent(Student student) throws SQLException{
+        dbconnector.openConnection();
+        conn = dbconnector.getConnection();
         
-        if(student.getId()>0){
+        
+        String query = "UPDATE students set firstname = ?, lastname = ?, "
+                + "description = ?, gender= ? WHERE id = ?";
+        
+        PreparedStatement preparedStmt = conn.prepareStatement(query);
+        preparedStmt.setString(1, student.getFirstName());
+        preparedStmt.setString(2, student.getLastName());
+        preparedStmt.setString(3, student.getDescription());
+        preparedStmt.setString(4, student.getGender());
         preparedStmt.setInt(5, student.getId());
-        }
+        
 
         // execute the preparedstatement
         preparedStmt.execute();
@@ -79,5 +89,25 @@ public class StudentDBManager {
         conn.close();
         
         return studentList;
+    
+     }
+     public void deleteStudent(Student student) throws SQLException{
+        dbconnector.openConnection();
+        conn = dbconnector.getConnection();
+        
+        
+        String query = "DELETE FROM students WHERE students.id = ?";
+        
+        PreparedStatement preparedStmt = conn.prepareStatement(query);
+
+        preparedStmt.setInt(1, student.getId());
+       
+      
+        
+
+        // execute the preparedstatement
+        preparedStmt.execute();
+
+        conn.close();
     }
 }
